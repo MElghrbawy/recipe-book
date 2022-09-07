@@ -1,4 +1,5 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { AuthService } from '../auth/auth.service';
 import { DataStoreService } from '../shared/data-storage.service';
 
 @Component({
@@ -9,9 +10,14 @@ import { DataStoreService } from '../shared/data-storage.service';
 export class HeaderComponent implements OnInit {
   @Output() loadedFeatutueEvent = new EventEmitter<string>();
 
-  constructor(private dataStoreService: DataStoreService) { }
+  isAuthenticated: boolean = false;
+  constructor(private dataStoreService: DataStoreService, private authService: AuthService) { }
 
   ngOnInit(): void {
+    this.authService.user.subscribe(user => {
+      this.isAuthenticated = !!user
+
+    })
   }
 
   loadingFeature = (feature: string) => {
@@ -24,6 +30,10 @@ export class HeaderComponent implements OnInit {
 
   onFetchRecipes(){
     this.dataStoreService.fetchRecipes()
+  }
+
+  onLogOut(){
+    this.authService.logout()
   }
 
 }
